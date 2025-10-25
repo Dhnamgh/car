@@ -21,7 +21,6 @@
       width:100px; height:100px;  /* desktop */
       pointer-events:auto; background:transparent;
     }
-    /* Mobile tự giảm kích thước blocker */
     @media (max-width:600px){
       .blocker{ width:72px; height:72px; }
     }
@@ -31,7 +30,8 @@
   <header>Ứng dụng AI trong quản lý xe</header>
   <div class="frame">
     <iframe
-      src="https://qrcarump.streamlit.app//?embed=true&embed_options=show_toolbar=false"
+      id="app"
+      src="https://qrcarump.streamlit.app/?embed=true&embed_options=show_toolbar=false"
       allow="clipboard-read; clipboard-write"
       referrerpolicy="no-referrer"
     ></iframe>
@@ -39,5 +39,25 @@
     <!-- Overlay Fullscreen -->
     <div class="blocker" aria-hidden="true"></div>
   </div>
+
+  <!-- ⚙️ Forward mọi query (?id=..., v.v.) của trang ngoài vào iframe -->
+  <script>
+    (function () {
+      var f = document.getElementById("app");
+      if (!f) return;
+
+      // Query trên URL ngoài, ví dụ: ?id=TRY001
+      var outerQuery = window.location.search;
+      if (!outerQuery) return;
+
+      // Hợp nhất query ngoài vào query hiện có của iframe (giữ embed params)
+      var url = new URL(f.src);
+      var outer = new URLSearchParams(outerQuery);
+      outer.forEach(function (val, key) {
+        url.searchParams.set(key, val); // ghi đè/ thêm mới: id, v.v.
+      });
+      f.src = url.toString();
+    })();
+  </script>
 </body>
 </html>
